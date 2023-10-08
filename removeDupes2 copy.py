@@ -4,7 +4,7 @@ import os.path
 from pathlib import Path
 
 sport = 0
-DKdata = pd.read_csv('DKSalariesCaptain.csv')
+DKdata = pd.read_csv('DKSalariesClassic.csv')
 playerData = pd.read_csv('playerStats.csv')
 
 if sport == 0:
@@ -18,7 +18,6 @@ if sport == 0:
   playerData.loc[playerData['TEAM'] == "San", 'TEAM'] = 'Sas'
   playerData.loc[playerData['TEAM'] == "Nor", 'TEAM'] = 'Nop'
   playerData.loc[playerData['TEAM'] == "Pho", 'TEAM'] = 'Phx'
-  playerData.loc[playerData['TEAM'] == "Gol", 'TEAM'] = 'Gsw'
   playerData.loc[playerData['FULL NAME'] == "Nic Claxton", 'FULL NAME'] = 'Nicolas Claxton'
   playerData.loc[playerData['FULL NAME'] == "Robert Williams III", 'FULL NAME'] = 'Robert Williams'
   playerData.loc[playerData['FULL NAME'] == "P.J. Washington", 'FULL NAME'] = 'PJ Washington'
@@ -52,16 +51,14 @@ if sport == 0:
   jackFPTs = PPGpoints + ThreesPGpoints + RBGpoints + APGpoints + SPGpoints + BPGpoints + TPGpoints
   playerData['jackAPPG'] = round(jackFPTs, 2)
 
-  #newData = pd.merge(DKData, playerData)
-  newData = DKData
+  newData = pd.merge(DKData, playerData)
 
-  #newData['DKPPM'] = round(newData['AvgPointsPerGame'] / newData['MPG'], 2)
+  newData['DKPPM'] = round(newData['AvgPointsPerGame'] / newData['MPG'], 2)
 
-  #newData['jackPPM'] = round(newData['jackAPPG'] / newData['MPG'], 2)
+  newData['jackPPM'] = round(newData['jackAPPG'] / newData['MPG'], 2)
 
   newData[['ProjMin','jackProjFPTs', 'DKProjFPTs']] = ""
-  #newData = newData[['Name', 'TeamAbbrev', 'AvgPointsPerGame', 'MPG', 'DKPPM', 'ProjMin', 'DKProjFPTs','jackAPPG', 'jackPPM', 'jackProjFPTs']]
-  newData = newData[['Name', 'TeamAbbrev', 'AvgPointsPerGame', 'ProjMin', 'DKProjFPTs','jackProjFPTs']]
+  newData = newData[['Name', 'TeamAbbrev', 'AvgPointsPerGame', 'MPG', 'DKPPM', 'ProjMin', 'DKProjFPTs','jackAPPG', 'jackPPM', 'jackProjFPTs']]
 else:
   print('yes')
 
@@ -75,7 +72,7 @@ except OSError:
 else:
     print ("Successfully created the directory %s " % path)
     
-fileName = "SaveThisTo_myOwnData"
+fileName = "SaveThisTo_myOwnData2"
 newData.to_csv(fileName+'.csv', index=False)
 
 

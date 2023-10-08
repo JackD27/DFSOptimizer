@@ -1,7 +1,7 @@
 import pulp
 import pandas as pd
     
-data_file = 'CPT_AvgPointsMIL@BOS.csv'
+data_file = 'CPT_AvgPointsBUF@LAR.csv'
 
 df = pd.read_csv(data_file, index_col=['Name', 'Roster Position'], skipinitialspace=True)
 
@@ -14,8 +14,6 @@ name_set = df.index.unique(0)
 costs = df['Salary'].to_dict()
 values = df['MyOwnProjFPTs'].to_dict()
 ids = df['ID'].to_dict()
-team = df['TeamAbbrev'].to_dict()
-pos = df['Position'].to_dict()
 
 # set up LP
 draft = pulp.LpVariable.dicts('selected', legal_assignments, cat='Binary')
@@ -29,7 +27,7 @@ prob += pulp.lpSum([draft[n, p]*values[n,p] for (n, p) in legal_assignments])
 prob += pulp.lpSum([draft[n, p]*costs[n,p] for (n, p) in legal_assignments]) <= 50000
 
 # pick 5 UTIL
-prob += pulp.lpSum([draft[n, p] for (n, p) in legal_assignments if p == 'UTIL']) == 5
+prob += pulp.lpSum([draft[n, p] for (n, p) in legal_assignments if p == 'FLEX']) == 5
 
 # pick 1 CPT
 prob += pulp.lpSum([draft[n, p] for (n, p) in legal_assignments if p == 'CPT']) == 1
@@ -38,13 +36,13 @@ prob += pulp.lpSum([draft[n, p] for (n, p) in legal_assignments if p == 'CPT']) 
 for name in name_set:
     prob += pulp.lpSum([draft[n, p] for (n, p) in legal_assignments if n == name]) <=1
     
-
-removeNames = []
+'''
+removeNames = ['Isaiah McKenzie']
 
 
 for names in removeNames:
-    prob += pulp.lpSum([draft[n, p] for (n, p) in legal_assignments if n == names]) == 1
-
+    prob += pulp.lpSum([draft[n, p] for (n, p) in legal_assignments if n == names and p == 'CPT']) == 1
+'''
 
 
 prob += pulp.lpSum([draft[n, p]*values[n,p] for (n, p) in legal_assignments]) <= 500
@@ -59,9 +57,7 @@ for idx in draft:
                         'Name': idx[0],
                         'Salary': costs[idx],
                         'Role': idx[1],
-                        'PPG': values[idx],
-                        'Position': pos[idx],
-                        'Team': team[idx]
+                        'PPG': values[idx]
                 })
         
 lineups = pd.DataFrame(lineup)
